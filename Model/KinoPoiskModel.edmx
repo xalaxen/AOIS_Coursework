@@ -1,0 +1,469 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+      <Schema Namespace="Хранилище AOIS_Vasenin8I11Model" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="Country">
+          <Key>
+            <PropertyRef Name="name" />
+          </Key>
+          <Property Name="name" Type="nvarchar" MaxLength="200" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Film">
+          <Key>
+            <PropertyRef Name="film_id" />
+          </Key>
+          <Property Name="film_id" Type="bigint" Nullable="false" />
+          <Property Name="name" Type="nvarchar" MaxLength="500" Nullable="false" />
+          <Property Name="year" Type="int" Nullable="false" />
+          <Property Name="raiting" Type="float" Nullable="false" />
+          <Property Name="ageRating" Type="int" Nullable="false" />
+          <Property Name="budget" Type="int" Nullable="false" />
+          <Property Name="movieLenght" Type="int" Nullable="false" />
+          <Property Name="fees" Type="bigint" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Film_counties">
+          <Key>
+            <PropertyRef Name="film_id" />
+            <PropertyRef Name="country_name" />
+          </Key>
+          <Property Name="film_id" Type="bigint" Nullable="false" />
+          <Property Name="country_name" Type="nvarchar" MaxLength="200" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Film_genres">
+          <Key>
+            <PropertyRef Name="film_id" />
+            <PropertyRef Name="genre_name" />
+          </Key>
+          <Property Name="film_id" Type="bigint" Nullable="false" />
+          <Property Name="genre_name" Type="nvarchar" MaxLength="50" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Film_Staff">
+          <Key>
+            <PropertyRef Name="person_id" />
+          </Key>
+          <Property Name="person_id" Type="bigint" Nullable="false" />
+          <Property Name="name" Type="nvarchar" MaxLength="500" Nullable="false" />
+          <Property Name="birthPlace" Type="nvarchar" MaxLength="200" Nullable="false" />
+          <Property Name="birthday" Type="date" Nullable="false" />
+          <Property Name="sex" Type="nvarchar" MaxLength="50" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Genre">
+          <Key>
+            <PropertyRef Name="name" />
+          </Key>
+          <Property Name="name" Type="nvarchar" MaxLength="50" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Role">
+          <Key>
+            <PropertyRef Name="name" />
+          </Key>
+          <Property Name="name" Type="nvarchar" MaxLength="100" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Staff_in_film">
+          <Key>
+            <PropertyRef Name="person_id" />
+            <PropertyRef Name="film_id" />
+            <PropertyRef Name="role_name" />
+          </Key>
+          <Property Name="person_id" Type="bigint" Nullable="false" />
+          <Property Name="film_id" Type="bigint" Nullable="false" />
+          <Property Name="role_name" Type="nvarchar" MaxLength="100" Nullable="false" />
+        </EntityType>
+        <Association Name="FK_Film_counties_Country">
+          <End Role="Country" Type="Self.Country" Multiplicity="1" />
+          <End Role="Film_counties" Type="Self.Film_counties" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Country">
+              <PropertyRef Name="name" />
+            </Principal>
+            <Dependent Role="Film_counties">
+              <PropertyRef Name="country_name" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Film_counties_Film">
+          <End Role="Film" Type="Self.Film" Multiplicity="1" />
+          <End Role="Film_counties" Type="Self.Film_counties" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Film">
+              <PropertyRef Name="film_id" />
+            </Principal>
+            <Dependent Role="Film_counties">
+              <PropertyRef Name="film_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Film_genres_Film">
+          <End Role="Film" Type="Self.Film" Multiplicity="1" />
+          <End Role="Film_genres" Type="Self.Film_genres" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Film">
+              <PropertyRef Name="film_id" />
+            </Principal>
+            <Dependent Role="Film_genres">
+              <PropertyRef Name="film_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Film_genres_Gener">
+          <End Role="Genre" Type="Self.Genre" Multiplicity="1" />
+          <End Role="Film_genres" Type="Self.Film_genres" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Genre">
+              <PropertyRef Name="name" />
+            </Principal>
+            <Dependent Role="Film_genres">
+              <PropertyRef Name="genre_name" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Film_Staff_Country">
+          <End Role="Country" Type="Self.Country" Multiplicity="1" />
+          <End Role="Film_Staff" Type="Self.Film_Staff" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Country">
+              <PropertyRef Name="name" />
+            </Principal>
+            <Dependent Role="Film_Staff">
+              <PropertyRef Name="birthPlace" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Staff_in_film_Film">
+          <End Role="Film" Type="Self.Film" Multiplicity="1" />
+          <End Role="Staff_in_film" Type="Self.Staff_in_film" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Film">
+              <PropertyRef Name="film_id" />
+            </Principal>
+            <Dependent Role="Staff_in_film">
+              <PropertyRef Name="film_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Staff_in_film_Film_Staff">
+          <End Role="Film_Staff" Type="Self.Film_Staff" Multiplicity="1" />
+          <End Role="Staff_in_film" Type="Self.Staff_in_film" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Film_Staff">
+              <PropertyRef Name="person_id" />
+            </Principal>
+            <Dependent Role="Staff_in_film">
+              <PropertyRef Name="person_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Staff_in_film_Role">
+          <End Role="Role" Type="Self.Role" Multiplicity="1" />
+          <End Role="Staff_in_film" Type="Self.Staff_in_film" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Role">
+              <PropertyRef Name="name" />
+            </Principal>
+            <Dependent Role="Staff_in_film">
+              <PropertyRef Name="role_name" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="Хранилище AOIS_Vasenin8I11ModelContainer">
+          <EntitySet Name="Country" EntityType="Self.Country" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Film" EntityType="Self.Film" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Film_counties" EntityType="Self.Film_counties" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Film_genres" EntityType="Self.Film_genres" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Film_Staff" EntityType="Self.Film_Staff" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Genre" EntityType="Self.Genre" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Role" EntityType="Self.Role" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Staff_in_film" EntityType="Self.Staff_in_film" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="FK_Film_counties_Country" Association="Self.FK_Film_counties_Country">
+            <End Role="Country" EntitySet="Country" />
+            <End Role="Film_counties" EntitySet="Film_counties" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Film_counties_Film" Association="Self.FK_Film_counties_Film">
+            <End Role="Film" EntitySet="Film" />
+            <End Role="Film_counties" EntitySet="Film_counties" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Film_genres_Film" Association="Self.FK_Film_genres_Film">
+            <End Role="Film" EntitySet="Film" />
+            <End Role="Film_genres" EntitySet="Film_genres" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Film_genres_Gener" Association="Self.FK_Film_genres_Gener">
+            <End Role="Genre" EntitySet="Genre" />
+            <End Role="Film_genres" EntitySet="Film_genres" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Film_Staff_Country" Association="Self.FK_Film_Staff_Country">
+            <End Role="Country" EntitySet="Country" />
+            <End Role="Film_Staff" EntitySet="Film_Staff" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Staff_in_film_Film" Association="Self.FK_Staff_in_film_Film">
+            <End Role="Film" EntitySet="Film" />
+            <End Role="Staff_in_film" EntitySet="Staff_in_film" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Staff_in_film_Film_Staff" Association="Self.FK_Staff_in_film_Film_Staff">
+            <End Role="Film_Staff" EntitySet="Film_Staff" />
+            <End Role="Staff_in_film" EntitySet="Staff_in_film" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Staff_in_film_Role" Association="Self.FK_Staff_in_film_Role">
+            <End Role="Role" EntitySet="Role" />
+            <End Role="Staff_in_film" EntitySet="Staff_in_film" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="AOIS_Vasenin8I11Model" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="Country">
+          <Key>
+            <PropertyRef Name="name" />
+          </Key>
+          <Property Name="name" Type="String" MaxLength="200" FixedLength="false" Unicode="true" Nullable="false" />
+          <NavigationProperty Name="Film_Staff" Relationship="Self.FK_Film_Staff_Country" FromRole="Country" ToRole="Film_Staff" />
+          <NavigationProperty Name="Films" Relationship="Self.Film_counties" FromRole="Country" ToRole="Film" />
+        </EntityType>
+        <EntityType Name="Film">
+          <Key>
+            <PropertyRef Name="film_id" />
+          </Key>
+          <Property Name="film_id" Type="Int64" Nullable="false" />
+          <Property Name="name" Type="String" MaxLength="500" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="year" Type="Int32" Nullable="false" />
+          <Property Name="raiting" Type="Double" Nullable="false" />
+          <Property Name="ageRating" Type="Int32" Nullable="false" />
+          <Property Name="budget" Type="Int32" Nullable="false" />
+          <Property Name="movieLenght" Type="Int32" Nullable="false" />
+          <Property Name="fees" Type="Int64" Nullable="false" />
+          <NavigationProperty Name="Staff_in_film" Relationship="Self.FK_Staff_in_film_Film" FromRole="Film" ToRole="Staff_in_film" />
+          <NavigationProperty Name="Countries" Relationship="Self.Film_counties" FromRole="Film" ToRole="Country" />
+          <NavigationProperty Name="Genres" Relationship="Self.Film_genres" FromRole="Film" ToRole="Genre" />
+        </EntityType>
+        <EntityType Name="Film_Staff">
+          <Key>
+            <PropertyRef Name="person_id" />
+          </Key>
+          <Property Name="person_id" Type="Int64" Nullable="false" />
+          <Property Name="name" Type="String" MaxLength="500" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="birthPlace" Type="String" MaxLength="200" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="birthday" Type="DateTime" Nullable="false" Precision="0" />
+          <Property Name="sex" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <NavigationProperty Name="Country" Relationship="Self.FK_Film_Staff_Country" FromRole="Film_Staff" ToRole="Country" />
+          <NavigationProperty Name="Staff_in_film" Relationship="Self.FK_Staff_in_film_Film_Staff" FromRole="Film_Staff" ToRole="Staff_in_film" />
+        </EntityType>
+        <EntityType Name="Genre">
+          <Key>
+            <PropertyRef Name="name" />
+          </Key>
+          <Property Name="name" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+          <NavigationProperty Name="Films" Relationship="Self.Film_genres" FromRole="Genre" ToRole="Film" />
+        </EntityType>
+        <EntityType Name="Role">
+          <Key>
+            <PropertyRef Name="name" />
+          </Key>
+          <Property Name="name" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
+          <NavigationProperty Name="Staff_in_film" Relationship="Self.FK_Staff_in_film_Role" FromRole="Role" ToRole="Staff_in_film" />
+        </EntityType>
+        <EntityType Name="Staff_in_film">
+          <Key>
+            <PropertyRef Name="person_id" />
+            <PropertyRef Name="film_id" />
+            <PropertyRef Name="role_name" />
+          </Key>
+          <Property Name="person_id" Type="Int64" Nullable="false" />
+          <Property Name="film_id" Type="Int64" Nullable="false" />
+          <Property Name="role_name" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
+          <NavigationProperty Name="Film" Relationship="Self.FK_Staff_in_film_Film" FromRole="Staff_in_film" ToRole="Film" />
+          <NavigationProperty Name="Film_Staff" Relationship="Self.FK_Staff_in_film_Film_Staff" FromRole="Staff_in_film" ToRole="Film_Staff" />
+          <NavigationProperty Name="Role" Relationship="Self.FK_Staff_in_film_Role" FromRole="Staff_in_film" ToRole="Role" />
+        </EntityType>
+        <Association Name="FK_Film_Staff_Country">
+          <End Role="Country" Type="Self.Country" Multiplicity="1" />
+          <End Role="Film_Staff" Type="Self.Film_Staff" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Country">
+              <PropertyRef Name="name" />
+            </Principal>
+            <Dependent Role="Film_Staff">
+              <PropertyRef Name="birthPlace" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Staff_in_film_Film">
+          <End Role="Film" Type="Self.Film" Multiplicity="1" />
+          <End Role="Staff_in_film" Type="Self.Staff_in_film" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Film">
+              <PropertyRef Name="film_id" />
+            </Principal>
+            <Dependent Role="Staff_in_film">
+              <PropertyRef Name="film_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Staff_in_film_Film_Staff">
+          <End Role="Film_Staff" Type="Self.Film_Staff" Multiplicity="1" />
+          <End Role="Staff_in_film" Type="Self.Staff_in_film" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Film_Staff">
+              <PropertyRef Name="person_id" />
+            </Principal>
+            <Dependent Role="Staff_in_film">
+              <PropertyRef Name="person_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Staff_in_film_Role">
+          <End Role="Role" Type="Self.Role" Multiplicity="1" />
+          <End Role="Staff_in_film" Type="Self.Staff_in_film" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Role">
+              <PropertyRef Name="name" />
+            </Principal>
+            <Dependent Role="Staff_in_film">
+              <PropertyRef Name="role_name" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="Film_counties">
+          <End Role="Country" Type="Self.Country" Multiplicity="*" />
+          <End Role="Film" Type="Self.Film" Multiplicity="*" />
+        </Association>
+        <Association Name="Film_genres">
+          <End Role="Film" Type="Self.Film" Multiplicity="*" />
+          <End Role="Genre" Type="Self.Genre" Multiplicity="*" />
+        </Association>
+        <EntityContainer Name="KinoPoistEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="Countries" EntityType="Self.Country" />
+          <EntitySet Name="Films" EntityType="Self.Film" />
+          <EntitySet Name="Film_Staff" EntityType="Self.Film_Staff" />
+          <EntitySet Name="Genres" EntityType="Self.Genre" />
+          <EntitySet Name="Roles" EntityType="Self.Role" />
+          <EntitySet Name="Staff_in_film" EntityType="Self.Staff_in_film" />
+          <AssociationSet Name="FK_Film_Staff_Country" Association="Self.FK_Film_Staff_Country">
+            <End Role="Country" EntitySet="Countries" />
+            <End Role="Film_Staff" EntitySet="Film_Staff" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Staff_in_film_Film" Association="Self.FK_Staff_in_film_Film">
+            <End Role="Film" EntitySet="Films" />
+            <End Role="Staff_in_film" EntitySet="Staff_in_film" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Staff_in_film_Film_Staff" Association="Self.FK_Staff_in_film_Film_Staff">
+            <End Role="Film_Staff" EntitySet="Film_Staff" />
+            <End Role="Staff_in_film" EntitySet="Staff_in_film" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Staff_in_film_Role" Association="Self.FK_Staff_in_film_Role">
+            <End Role="Role" EntitySet="Roles" />
+            <End Role="Staff_in_film" EntitySet="Staff_in_film" />
+          </AssociationSet>
+          <AssociationSet Name="Film_counties" Association="Self.Film_counties">
+            <End Role="Country" EntitySet="Countries" />
+            <End Role="Film" EntitySet="Films" />
+          </AssociationSet>
+          <AssociationSet Name="Film_genres" Association="Self.Film_genres">
+            <End Role="Film" EntitySet="Films" />
+            <End Role="Genre" EntitySet="Genres" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="Хранилище AOIS_Vasenin8I11ModelContainer" CdmEntityContainer="KinoPoistEntities">
+          <EntitySetMapping Name="Countries">
+            <EntityTypeMapping TypeName="AOIS_Vasenin8I11Model.Country">
+              <MappingFragment StoreEntitySet="Country">
+                <ScalarProperty Name="name" ColumnName="name" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Films">
+            <EntityTypeMapping TypeName="AOIS_Vasenin8I11Model.Film">
+              <MappingFragment StoreEntitySet="Film">
+                <ScalarProperty Name="film_id" ColumnName="film_id" />
+                <ScalarProperty Name="name" ColumnName="name" />
+                <ScalarProperty Name="year" ColumnName="year" />
+                <ScalarProperty Name="raiting" ColumnName="raiting" />
+                <ScalarProperty Name="ageRating" ColumnName="ageRating" />
+                <ScalarProperty Name="budget" ColumnName="budget" />
+                <ScalarProperty Name="movieLenght" ColumnName="movieLenght" />
+                <ScalarProperty Name="fees" ColumnName="fees" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Film_Staff">
+            <EntityTypeMapping TypeName="AOIS_Vasenin8I11Model.Film_Staff">
+              <MappingFragment StoreEntitySet="Film_Staff">
+                <ScalarProperty Name="person_id" ColumnName="person_id" />
+                <ScalarProperty Name="name" ColumnName="name" />
+                <ScalarProperty Name="birthPlace" ColumnName="birthPlace" />
+                <ScalarProperty Name="birthday" ColumnName="birthday" />
+                <ScalarProperty Name="sex" ColumnName="sex" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Genres">
+            <EntityTypeMapping TypeName="AOIS_Vasenin8I11Model.Genre">
+              <MappingFragment StoreEntitySet="Genre">
+                <ScalarProperty Name="name" ColumnName="name" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Roles">
+            <EntityTypeMapping TypeName="AOIS_Vasenin8I11Model.Role">
+              <MappingFragment StoreEntitySet="Role">
+                <ScalarProperty Name="name" ColumnName="name" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Staff_in_film">
+            <EntityTypeMapping TypeName="AOIS_Vasenin8I11Model.Staff_in_film">
+              <MappingFragment StoreEntitySet="Staff_in_film">
+                <ScalarProperty Name="person_id" ColumnName="person_id" />
+                <ScalarProperty Name="film_id" ColumnName="film_id" />
+                <ScalarProperty Name="role_name" ColumnName="role_name" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <AssociationSetMapping Name="Film_counties" TypeName="AOIS_Vasenin8I11Model.Film_counties" StoreEntitySet="Film_counties">
+            <EndProperty Name="Country">
+              <ScalarProperty Name="name" ColumnName="country_name" />
+            </EndProperty>
+            <EndProperty Name="Film">
+              <ScalarProperty Name="film_id" ColumnName="film_id" />
+            </EndProperty>
+          </AssociationSetMapping>
+          <AssociationSetMapping Name="Film_genres" TypeName="AOIS_Vasenin8I11Model.Film_genres" StoreEntitySet="Film_genres">
+            <EndProperty Name="Film">
+              <ScalarProperty Name="film_id" ColumnName="film_id" />
+            </EndProperty>
+            <EndProperty Name="Genre">
+              <ScalarProperty Name="name" ColumnName="genre_name" />
+            </EndProperty>
+          </AssociationSetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="true" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="Нет" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>
