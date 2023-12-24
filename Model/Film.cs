@@ -27,9 +27,10 @@ namespace AOIS.Model
         public int year { get; set; }
         public double raiting { get; set; }
         public int ageRating { get; set; }
-        public int budget { get; set; }
+        public long budget { get; set; }
         public int movieLenght { get; set; }
         public long fees { get; set; }
+        public string budget_currency { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Staff_in_film> Staff_in_film { get; set; }

@@ -36,24 +36,21 @@
             </ListBox.ItemTemplate>
         </ListBox>
 
-        <Label Grid.Column="1" Grid.Row="0" FontSize="24" FontWeight="Bold">Details:</Label>
-        <Label Grid.Column="3" Grid.Row="0" FontSize="24" FontWeight="Bold">More actions:</Label>
+        <Label Grid.Column="1" Grid.Row="0" FontSize="24" FontWeight="Bold">Подробнее:</Label>
 
-        <Label Grid.Column="1" Grid.Row="1" FontSize="24">Name:</Label>
+        <Label Grid.Column="1" Grid.Row="1" FontSize="24">ФИО:</Label>
         <Label x:Name="NameLabel" Grid.Column="2" Grid.Row="1" FontSize="24" DataContext="{Binding SelectedPerson}" Content="{Binding name}"/>
 
-        <Label Grid.Column="1" Grid.Row="2" FontSize="24">Birth place:</Label>
+        <Label Grid.Column="1" Grid.Row="2" FontSize="24">Место рождения:</Label>
         <Label x:Name="BirthPlaceLabel" Grid.Column="2" Grid.Row="2" FontSize="24" DataContext="{Binding SelectedPerson}" Content="{Binding birthPlace[1].Value}"/>
 
-        <Label Grid.Column="1" Grid.Row="3" FontSize="24">Birth date:</Label>
+        <Label Grid.Column="1" Grid.Row="3" FontSize="24">Дата рождения:</Label>
         <Label x:Name="BirthDateLabel" Grid.Column="2" Grid.Row="3" FontSize="24" DataContext="{Binding SelectedPerson}" Content="{Binding birthDay}"/>
 
-        <Label Grid.Column="1" Grid.Row="4" FontSize="24">Sex:</Label>
+        <Label Grid.Column="1" Grid.Row="4" FontSize="24">Пол:</Label>
         <Label x:Name="SexLabel" Grid.Column="2" Grid.Row="4" FontSize="24" DataContext="{Binding SelectedPerson}" Content="{Binding sex}"/>
 
-        <Label Grid.Column="1" Grid.Row="5" FontSize="24">Role:</Label>
+        <Label Grid.Column="1" Grid.Row="5" FontSize="24">Должность:</Label>
         <Label x:Name="RoleLabel" Grid.Column="2" Grid.Row="5" FontSize="24" DataContext="{Binding SelectedPerson}" Content="{Binding profession}"/>
-
-        <Button Grid.Column="3" Grid.Row="1">Appeared in films report</Button>
     </Grid>
 </Window>

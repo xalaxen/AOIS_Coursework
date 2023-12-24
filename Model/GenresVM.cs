@@ -1,6 +1,7 @@
 ﻿using AOIS.Controller;
 using Lab_3.Classes;
 using Newtonsoft.Json;
+using ProductsDelliverySystem;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -51,7 +52,41 @@ namespace AOIS.Model
             FillGenresList();
         }
 
-        public async void FillGenresList()
+        // Заполняет массив жанрами из БД, если на вход не подан другой массив жанров, иначе же обновляет данные
+        public void FillGenresList(List<Genre> genreList = null)
+        {
+            if(genreList != null)  // случай с загрузкой новых данных в бд
+            {
+                using (var context = new KinoPoistEntities())
+                {
+                    foreach (var genre in genreList)
+                    {
+                        genres.Add(genre);
+
+                        if (!context.Genres.Contains(genre))
+                        {
+                            context.Genres.Add(genre);
+                        }
+                    }
+                    context.SaveChanges();
+                }
+            }
+            else // случай с загрузкой данных из бд
+            {
+                using(var context = new KinoPoistEntities())
+                {
+                    foreach(var genre in context.Genres)
+                    {
+                        genres.Add(genre);
+                    }
+                }
+            }
+
+            OnPropertyChanged(nameof(Genres));
+        }
+
+        // Обновление списка жанров полученных из API запроса и добавление их в БД через FillGenresList
+        public async void UpdateGenresList()
         {
             string response;
             List<Genre> genreList;
@@ -67,12 +102,7 @@ namespace AOIS.Model
                 return;
             }
 
-            foreach (var genre in genreList)
-            {
-                genres.Add(genre);
-            }
-
-            OnPropertyChanged(nameof(Genres));
+            FillGenresList(genreList);
         }
 
         protected virtual void OnPropertyChanged(string propertyName)

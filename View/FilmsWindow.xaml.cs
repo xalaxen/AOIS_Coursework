@@ -34,5 +34,10 @@ namespace AOIS
             staffDetailsWindow.Show();
             staffDetailsWindow.Focus();
         }
+
+        private async void UpdateFilmsListAPIBtn(object sender, RoutedEventArgs e)
+        {
+            await model.UpdateFilmsList(1);
+        }
     }
 }

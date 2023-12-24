@@ -53,10 +53,73 @@ namespace AOIS.Model
         {
             rawPersons = people;
             FillPersonsInfo();
+            if(Persons.Count == 0)
+            {
+                UpdatePersonsInfo();
+            }
         }
 
-        public async void FillPersonsInfo()
+        public void FillPersonsInfo(List<PersonJsonModel> persons = null)
         {
+            if(persons != null) // случай с загрузкой новых данных в бд
+            {
+                using (var context = new KinoPoistEntities())
+                {
+                    foreach(var person in persons)
+                    {
+                        if(context.Film_Staff.Find(person.id) == null)
+                        {
+                            // заполнение словаря ролей
+                            if (context.Roles.Find(person.profession) == null)
+                            {
+                                context.Roles.Add(new Role { name = person.profession });
+                            }
+
+                            // если там в джсоне намесили чего непонятного
+                            if (context.Countries.Find(person.birthPlace[0].Value) == null)
+                            {
+                                context.Countries.Add(new Country { name = person.birthPlace[0].Value });
+                            }
+
+                            context.Film_Staff.Add(new Film_Staff
+                            {
+                                person_id = person.id,
+                                name = person.name,
+                                birthday = person.birthDay,
+                                birthPlace = person.birthPlace[0].Value,
+                                sex = person.sex
+                            });
+
+                            Persons.Add(person);
+                            context.SaveChanges();
+                        }
+                    }
+                }
+            }
+            else // случай с загрузкой данных из бд
+            {
+                using(var context = new KinoPoistEntities())
+                {
+                    foreach(var person in context.Film_Staff)
+                    {
+                        Persons.Add(new PersonJsonModel
+                        {
+                            id = person.person_id,
+                            name = person.name,
+                            birthDay = person.birthday,
+                            birthPlace = new List<BPlace> { new BPlace { Value = person.birthPlace } },
+                            sex = person.sex
+                        });
+                    }
+                }
+            }
+
+            OnPropertyChanged(nameof(Persons));
+        }
+
+        public async void UpdatePersonsInfo()
+        {
+            List<PersonJsonModel> people = new List<PersonJsonModel>();
             foreach (Person person in rawPersons)
             {
                 try
@@ -67,7 +130,7 @@ namespace AOIS.Model
                     {
                         RootObjectStaff rootObjectStaff = JsonConvert.DeserializeObject<RootObjectStaff>(response);
                         rootObjectStaff.PersonJsonModel[0].profession = person.Profession;
-                        Persons.Add(rootObjectStaff.PersonJsonModel[0]);
+                        people.Add(rootObjectStaff.PersonJsonModel[0]);
                     }
                     catch
                     {
@@ -79,6 +142,7 @@ namespace AOIS.Model
                     continue;
                 }
             }
+            FillPersonsInfo(people);
             OnPropertyChanged(nameof(Persons));
         }
 

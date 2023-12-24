@@ -21,8 +21,8 @@
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="0.4*"/>
-            <ColumnDefinition Width="0.3*"/>
-            <ColumnDefinition Width="0.5*"/>
+            <ColumnDefinition Width="0.35*"/>
+            <ColumnDefinition Width="0.35*"/>
             <ColumnDefinition Width="0.3*"/>
         </Grid.ColumnDefinitions>
 
@@ -36,16 +36,16 @@
             </ListBox.ItemTemplate>
         </ListBox>
 
-        <Label Grid.Row="0" Grid.Column="1" FontSize="24" FontWeight="Bold">Film details:</Label>
-        <Label Grid.Row="0" Grid.Column="3" FontSize="24" FontWeight="Bold">More actions:</Label>
+        <Label Grid.Row="0" Grid.Column="1" FontSize="24" FontWeight="Bold">Детали фильма:</Label>
+        <Label Grid.Row="0" Grid.Column="3" FontSize="24" FontWeight="Bold">Еще действия:</Label>
 
-        <Label Grid.Row="1" Grid.Column="1" FontSize="24">Title:</Label>
+        <Label Grid.Row="1" Grid.Column="1" FontSize="24">Название:</Label>
         <Label DataContext="{Binding SelectedFilm}" Grid.Row="1" Grid.Column="2" FontSize="20" Content="{Binding Name}"/>
 
-        <Label Grid.Row="2" Grid.Column="1" FontSize="24">Release year:</Label>
+        <Label Grid.Row="2" Grid.Column="1" FontSize="24">Год выпуска:</Label>
         <Label DataContext="{Binding SelectedFilm}" Grid.Row="2" Grid.Column="2" FontSize="20" Content="{Binding Year}"/>
 
-        <Label Grid.Row="3" Grid.Column="1" FontSize="24">Budget:</Label>
+        <Label Grid.Row="3" Grid.Column="1" FontSize="24">Бюджет:</Label>
         <Label DataContext="{Binding SelectedFilm}" Grid.Row="3" Grid.Column="2">
             <TextBlock>
                 <Run FontSize="20" Text="{Binding Budget.Value}"/>
@@ -53,7 +53,7 @@
             </TextBlock>
         </Label>
 
-        <Label Grid.Row="4" Grid.Column="1" FontSize="24">Fees:</Label>
+        <Label Grid.Row="4" Grid.Column="1" FontSize="24">Прибыль:</Label>
         <Label DataContext="{Binding SelectedFilm}" Grid.Row="4" Grid.Column="2">
             <TextBlock>
                 <Run FontSize="20" Text="{Binding Fees.World.Value}"/>
@@ -61,18 +61,18 @@
             </TextBlock>
         </Label>
 
-        <Label Grid.Row="5" Grid.Column="1" FontSize="21">KinoPoisk raiting:</Label>
+        <Label Grid.Row="5" Grid.Column="1" FontSize="21">Рейтинг Кинопоиск:</Label>
         <StackPanel Grid.Row="5" Grid.Column="2">
             <Label FontSize="20" Content="{Binding SelectedFilm.Rating.Kp}"/>
         </StackPanel>
 
-        <Label Grid.Row="6" Grid.Column="1" FontSize="24">Age raiting:</Label>
+        <Label Grid.Row="6" Grid.Column="1" FontSize="24">Возрастной рейтинг:</Label>
         <Label DataContext="{Binding SelectedFilm}" Grid.Row="6" Grid.Column="2" FontSize="20" Content="{Binding AgeRating}"/>
 
-        <Label Grid.Row="7" Grid.Column="1" FontSize="24">Movie lenght:</Label>
+        <Label Grid.Row="7" Grid.Column="1" FontSize="24">Длительность:</Label>
         <Label DataContext="{Binding SelectedFilm}" Grid.Row="7" Grid.Column="2" FontSize="20" Content="{Binding MovieLength}"/>
 
-        <Label Grid.Row="8" Grid.Column="1" FontSize="24">Country:</Label>
+        <Label Grid.Row="8" Grid.Column="1" FontSize="24">Страны:</Label>
         <ListBox DataContext="{Binding SelectedFilm}" Grid.Row="8" Grid.Column="2" ItemsSource="{Binding Countries}" Margin="0 0 0 5">
             <ListBox.ItemTemplate>
                 <DataTemplate>
@@ -81,6 +81,16 @@
             </ListBox.ItemTemplate>
         </ListBox>
 
-        <Button x:Name="ShowFilmStaffBtn" Grid.Row="1" Grid.Column="3" FontSize="24" Margin="5" Click="FilmStaffDetailsBtn">Staff</Button>
+        <Button x:Name="ShowFilmStaffBtn" Grid.Row="1" Grid.RowSpan="2" Grid.Column="3" FontSize="24" Margin="20" Click="FilmStaffDetailsBtn">
+            <TextBlock TextWrapping="Wrap" TextAlignment="Center">
+                Съемочный состав
+            </TextBlock>
+        </Button>
+
+        <Button x:Name="UpdateFilmsListBtn" Grid.Row="3" Grid.RowSpan="2" Grid.Column="3" FontSize="20" Margin="20" Click="UpdateFilmsListAPIBtn">
+            <TextBlock TextWrapping="Wrap" TextAlignment="Center">
+                Обновить список  фильмов
+            </TextBlock>
+        </Button>
     </Grid>
 </Window>
