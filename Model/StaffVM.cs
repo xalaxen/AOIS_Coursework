@@ -9,6 +9,7 @@ using System.Data.Entity.Migrations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace AOIS.Model
 {
@@ -60,7 +61,7 @@ namespace AOIS.Model
 
         public StaffVM(List<Person> people, long nfilm_id)
         {
-            rawPersons = people;
+            //rawPersons = people;
             film_id = nfilm_id;
             FillPersonsInfo(film_id);
             if(Persons.Count == 0)
@@ -83,7 +84,7 @@ namespace AOIS.Model
                             name = person.name,
                             birthday = person.birthDay,
                             birthPlace = person.birthPlace != null && person.birthPlace.Any() ? person.birthPlace.Last().Value : "н/д",
-                            sex = person.sex
+                            sex = person.sex != null ? person.sex : "н/д"
                         };
 
                         // добавление стран, если чегото не хватает
@@ -104,12 +105,13 @@ namespace AOIS.Model
                         if(existingRole == null) { context.Roles.Add(new Role { name = person.profession }); }
 
                         // добавление связи с фильмом
-                        context.Staff_in_film.Add(new Staff_in_film
+                        context.Staff_in_film.AddOrUpdate(new Staff_in_film
                         {
                             film_id = film_id,
                             person_id = film_Staff.person_id,
                             role_name = person.profession
                         });
+
                         context.Film_Staff.AddOrUpdate(film_Staff);
                         Persons.Add(person);
                         context.SaveChanges();
@@ -149,9 +151,10 @@ namespace AOIS.Model
             OnPropertyChanged(nameof(Persons));
         }
 
-        public async void UpdatePersonsInfo() // TODO: поправить этот метод и метод FillPersonsInfo чтобы загрузались даже те люди у которых чего-то не хвататет.
+        public async void UpdatePersonsInfo()
         {
             List<PersonJsonModel> people = new List<PersonJsonModel>();
+            await GetSelectedFilmStaff();
             foreach (Person person in rawPersons)
             {
                 try
@@ -176,6 +179,22 @@ namespace AOIS.Model
             }
             FillPersonsInfo(film_id, people);
             OnPropertyChanged(nameof(Persons));
+        }
+
+        // получаем съемочную группу фильма, для передачи их айдишников в другой VM
+        public async Task GetSelectedFilmStaff()
+        {
+            try
+            {
+                string response = await requests.GetFilmStaff(TOKEN, film_id);
+                RootObject rootObject = JsonConvert.DeserializeObject<RootObject>(response);
+                List<FilmJsonModel> root = rootObject.Films;
+                rawPersons = root[0].Persons;
+            }
+            catch
+            {
+                MessageBox.Show("Не удалось получить команду фильма");
+            }
         }
 
         protected virtual void OnPropertyChanged(string propertyName)

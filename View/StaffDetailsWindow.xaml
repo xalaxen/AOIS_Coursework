@@ -52,5 +52,7 @@
 
         <Label Grid.Column="1" Grid.Row="5" FontSize="24">Должность:</Label>
         <Label x:Name="RoleLabel" Grid.Column="2" Grid.Row="5" FontSize="24" DataContext="{Binding SelectedPerson}" Content="{Binding profession}"/>
+
+        <Button Grid.Column="3" Grid.Row="1" FontSize="20" Click="UdpateStaffDetailsInfoBtn">Обновить информацию</Button>
     </Grid>
 </Window>

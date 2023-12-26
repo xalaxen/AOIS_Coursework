@@ -239,24 +239,6 @@ namespace AOIS.Model
             OnPropertyChanged(nameof(Films));
         }
 
-        // получаем съемочную группу фильма, для передачи их айдишников в другой VM
-        public async Task GetSelectedFilmStaff()
-        {
-            try
-            {
-                string response = await requests.GetFilmStaff(TOKEN, selectedFilm.Id);
-                RootObject rootObject = JsonConvert.DeserializeObject<RootObject>(response);
-                List<FilmJsonModel> root = rootObject.Films;
-                List<Person> people = root[0].Persons;
-                SelectedFilm.Persons = people;
-            }
-            catch
-            {
-                MessageBox.Show("Не удалось получить команду фильма");
-            }
-            OnPropertyChanged(nameof(SelectedFilm));
-        }
-
         protected virtual void OnPropertyChanged(string propertyName)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));

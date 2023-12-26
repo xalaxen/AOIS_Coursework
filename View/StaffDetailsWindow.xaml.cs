@@ -28,5 +28,10 @@ namespace AOIS
             model = new StaffVM(people, film_id);
             DataContext = model;
         }
+
+        private void UdpateStaffDetailsInfoBtn(object sender, RoutedEventArgs e)
+        {
+            model.UpdatePersonsInfo();
+        }
     }
 }
