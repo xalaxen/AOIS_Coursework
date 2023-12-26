@@ -61,7 +61,6 @@ namespace AOIS.Model
 
         public StaffVM(List<Person> people, long nfilm_id)
         {
-            //rawPersons = people;
             film_id = nfilm_id;
             FillPersonsInfo(film_id);
             if(Persons.Count == 0)

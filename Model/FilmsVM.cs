@@ -23,8 +23,22 @@ namespace AOIS.Model
         public event PropertyChangedEventHandler PropertyChanged;
         MakeRequests requests = new MakeRequests();
         FilmJsonModel selectedFilm;
+        int pageNumber = 1;
         string selectedGenre;
         ObservableCollection<FilmJsonModel> films = new ObservableCollection<FilmJsonModel>();
+
+        public int PageNumber
+        {
+            get { return pageNumber; }
+            set
+            {
+                if(pageNumber != value)
+                {
+                    pageNumber = Convert.ToInt32(value);
+                    OnPropertyChanged(nameof(PageNumber));
+                }
+            }
+        }
 
         public FilmJsonModel SelectedFilm
         {
@@ -80,7 +94,7 @@ namespace AOIS.Model
 
         private async void InitAsync()
         {
-            await UpdateFilmsList(1);
+            await UpdateFilmsList(pageNumber);
         }
 
         public void FillFilmsList(List<FilmJsonModel> filmsList = null)
@@ -194,27 +208,22 @@ namespace AOIS.Model
 
         public async Task UpdateFilmsList(int page = 1)
         {
-            int currentPage = 1;
             List<FilmJsonModel> allFilmsList = new List<FilmJsonModel>();
 
             try
             {
                 // загрузка всех фильмов до какой-то страницы (по умолчанию только 1)
-                while (currentPage <= page)
-                {
-                    string response = await requests.GetFilms(TOKEN, selectedGenre, currentPage);
-                    RootObject rootObj = JsonConvert.DeserializeObject<RootObject>(response);
-                    List<FilmJsonModel> filmsList = rootObj.Films;
-                    
-                    // если фильмов почему-то нет (дада вроде и такое может быть)
-                    if (filmsList.Count == 0)
-                    {
-                        break;
-                    }
+                string response = await requests.GetFilms(TOKEN, selectedGenre, page);
+                RootObject rootObj = JsonConvert.DeserializeObject<RootObject>(response);
+                List<FilmJsonModel> filmsList = rootObj.Films;
 
-                    allFilmsList.AddRange(filmsList);
-                    currentPage++;
+                // если фильмов почему-то нет (дада вроде и такое может быть)
+                if (filmsList.Count == 0)
+                {
+                    return;
                 }
+
+                allFilmsList.AddRange(filmsList);
             }
             catch (HttpRequestException ex)
             {

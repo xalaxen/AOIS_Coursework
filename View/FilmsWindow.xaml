@@ -89,7 +89,7 @@
 
         <Button x:Name="UpdateFilmsListBtn" Grid.Row="3" Grid.RowSpan="2" Grid.Column="3" FontSize="20" Margin="20" Click="UpdateFilmsListAPIBtn">
             <TextBlock TextWrapping="Wrap" TextAlignment="Center">
-                Обновить список  фильмов
+                Загрузить список фильмов
             </TextBlock>
         </Button>
     </Grid>
