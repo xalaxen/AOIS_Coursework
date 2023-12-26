@@ -45,6 +45,17 @@ namespace AOIS.Controller
             return films_list;
         }
 
+        public async Task<string> GetFilmStaff(string TOKEN, long film_id)
+        {
+            var request = new HttpRequestMessage(HttpMethod.Get, "https://api.kinopoisk.dev/v1.4/movie?page=1&limit=250&selectFields=persons&id=" + $"{film_id}");
+            request.Headers.Add("X-API-KEY", TOKEN);
+            var response = await client.SendAsync(request);
+            response.EnsureSuccessStatusCode();
+            string film_staff = await response.Content.ReadAsStringAsync();
+
+            return film_staff;
+        }
+
         public async Task<string> GetPersonsInfo(string TOKEN, long ID)
         {
             var request = new HttpRequestMessage(HttpMethod.Get, "https://api.kinopoisk.dev/v1.4/person?page=1&limit=250&selectFields=id&selectFields=name&selectFields=sex&selectFields=birthday&selectFields=birthPlace&" + $"id={ID}");

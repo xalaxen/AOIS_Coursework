@@ -28,9 +28,10 @@ namespace AOIS
             DataContext = model;
         }
 
-        private void FilmStaffDetailsBtn(object sender, RoutedEventArgs e)
+        private async void FilmStaffDetailsBtn(object sender, RoutedEventArgs e)
         {
-            StaffDetailsWindow staffDetailsWindow = new StaffDetailsWindow(model.SelectedFilm.Persons);
+            await model.GetSelectedFilmStaff();
+            StaffDetailsWindow staffDetailsWindow = new StaffDetailsWindow(model.SelectedFilm.Persons, model.SelectedFilm.Id);
             staffDetailsWindow.Show();
             staffDetailsWindow.Focus();
         }

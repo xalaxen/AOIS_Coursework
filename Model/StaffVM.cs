@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Data.Entity.Migrations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -19,7 +20,7 @@ namespace AOIS.Model
 
         // этот массив нужен для того, чтобы получить полную нужную информацию о человеке, тк в этом классе храниться не вся нужная информация
         List<Person> rawPersons = new List<Person>();
-
+        long film_id;
         PersonJsonModel selectedPerson;
         ObservableCollection<PersonJsonModel> persons = new ObservableCollection<PersonJsonModel>();
 
@@ -48,18 +49,27 @@ namespace AOIS.Model
                 }
             }
         }
+        public long Film_id
+        {
+            get { return film_id; }
+            set
+            {
+                film_id= value;
+            }
+        }
 
-        public StaffVM(List<Person> people)
+        public StaffVM(List<Person> people, long nfilm_id)
         {
             rawPersons = people;
-            FillPersonsInfo();
+            film_id = nfilm_id;
+            FillPersonsInfo(film_id);
             if(Persons.Count == 0)
             {
                 UpdatePersonsInfo();
             }
         }
 
-        public void FillPersonsInfo(List<PersonJsonModel> persons = null)
+        public void FillPersonsInfo(long film_id, List<PersonJsonModel> persons = null)
         {
             if(persons != null) // случай с загрузкой новых данных в бд
             {
@@ -67,32 +77,42 @@ namespace AOIS.Model
                 {
                     foreach(var person in persons)
                     {
-                        if(context.Film_Staff.Find(person.id) == null)
+                        Film_Staff film_Staff = new Film_Staff
                         {
-                            // заполнение словаря ролей
-                            if (context.Roles.Find(person.profession) == null)
+                            person_id = person.id,
+                            name = person.name,
+                            birthday = person.birthDay,
+                            birthPlace = person.birthPlace != null && person.birthPlace.Any() ? person.birthPlace.Last().Value : "н/д",
+                            sex = person.sex
+                        };
+
+                        // добавление стран, если чегото не хватает
+                        if (person.birthPlace != null)
+                        {
+                            foreach (var country in person.birthPlace)
                             {
-                                context.Roles.Add(new Role { name = person.profession });
+                                var existingCountry = context.Countries.FirstOrDefault(c => c.name == country.Value);
+                                if (existingCountry == null)
+                                {
+                                    context.Countries.Add(new Country { name = country.Value });
+                                }
                             }
-
-                            // если там в джсоне намесили чего непонятного
-                            if (context.Countries.Find(person.birthPlace[0].Value) == null)
-                            {
-                                context.Countries.Add(new Country { name = person.birthPlace[0].Value });
-                            }
-
-                            context.Film_Staff.Add(new Film_Staff
-                            {
-                                person_id = person.id,
-                                name = person.name,
-                                birthday = person.birthDay,
-                                birthPlace = person.birthPlace[0].Value,
-                                sex = person.sex
-                            });
-
-                            Persons.Add(person);
-                            context.SaveChanges();
                         }
+
+                        // заполнение словаря ролей
+                        var existingRole = context.Roles.FirstOrDefault(r => r.name == person.profession);
+                        if(existingRole == null) { context.Roles.Add(new Role { name = person.profession }); }
+
+                        // добавление связи с фильмом
+                        context.Staff_in_film.Add(new Staff_in_film
+                        {
+                            film_id = film_id,
+                            person_id = film_Staff.person_id,
+                            role_name = person.profession
+                        });
+                        context.Film_Staff.AddOrUpdate(film_Staff);
+                        Persons.Add(person);
+                        context.SaveChanges();
                     }
                 }
             }
@@ -100,16 +120,28 @@ namespace AOIS.Model
             {
                 using(var context = new KinoPoistEntities())
                 {
-                    foreach(var person in context.Film_Staff)
+                    // получаем состав фильма
+                    var personsInFilm = context.Film_Staff 
+                        .Where(person => person.Staff_in_film.Any(pf => pf.film_id == film_id))
+                        .ToList();
+
+                    foreach(var person in personsInFilm)
                     {
-                        Persons.Add(new PersonJsonModel
+                        // получаем роль в фильме
+                        var staffRolesInFilm = person.Staff_in_film.FirstOrDefault(pf => pf.film_id == film_id);
+                        // заполняем сущьность
+                        if(staffRolesInFilm != null)
                         {
-                            id = person.person_id,
-                            name = person.name,
-                            birthDay = person.birthday,
-                            birthPlace = new List<BPlace> { new BPlace { Value = person.birthPlace } },
-                            sex = person.sex
-                        });
+                            Persons.Add(new PersonJsonModel
+                            {
+                                id = person.person_id,
+                                name = person.name,
+                                birthDay = person.birthday,
+                                birthPlace = new List<BPlace> { new BPlace { Value = person.birthPlace } },
+                                sex = person.sex,
+                                profession = staffRolesInFilm.role_name
+                            });
+                        }
                     }
                 }
             }
@@ -117,7 +149,7 @@ namespace AOIS.Model
             OnPropertyChanged(nameof(Persons));
         }
 
-        public async void UpdatePersonsInfo()
+        public async void UpdatePersonsInfo() // TODO: поправить этот метод и метод FillPersonsInfo чтобы загрузались даже те люди у которых чего-то не хвататет.
         {
             List<PersonJsonModel> people = new List<PersonJsonModel>();
             foreach (Person person in rawPersons)
@@ -142,7 +174,7 @@ namespace AOIS.Model
                     continue;
                 }
             }
-            FillPersonsInfo(people);
+            FillPersonsInfo(film_id, people);
             OnPropertyChanged(nameof(Persons));
         }
 

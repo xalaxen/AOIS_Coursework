@@ -13,6 +13,7 @@ namespace AOIS.Model
     {
         [JsonProperty("docs")]
         public List<FilmJsonModel> Films { get; set; }
+        public int pages { get; set; }
     }
 
     public class FilmJsonModel

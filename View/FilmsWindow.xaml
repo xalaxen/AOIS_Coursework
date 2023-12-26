@@ -76,7 +76,7 @@
         <ListBox DataContext="{Binding SelectedFilm}" Grid.Row="8" Grid.Column="2" ItemsSource="{Binding Countries}" Margin="0 0 0 5">
             <ListBox.ItemTemplate>
                 <DataTemplate>
-                    <Label Content="{Binding Name}"/>
+                    <Label Content="{Binding name}"/>
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>

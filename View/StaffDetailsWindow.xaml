@@ -42,7 +42,7 @@
         <Label x:Name="NameLabel" Grid.Column="2" Grid.Row="1" FontSize="24" DataContext="{Binding SelectedPerson}" Content="{Binding name}"/>
 
         <Label Grid.Column="1" Grid.Row="2" FontSize="24">Место рождения:</Label>
-        <Label x:Name="BirthPlaceLabel" Grid.Column="2" Grid.Row="2" FontSize="24" DataContext="{Binding SelectedPerson}" Content="{Binding birthPlace[1].Value}"/>
+        <Label x:Name="BirthPlaceLabel" Grid.Column="2" Grid.Row="2" FontSize="24" DataContext="{Binding SelectedPerson}" Content="{Binding birthPlace[0].Value}"/>
 
         <Label Grid.Column="1" Grid.Row="3" FontSize="24">Дата рождения:</Label>
         <Label x:Name="BirthDateLabel" Grid.Column="2" Grid.Row="3" FontSize="24" DataContext="{Binding SelectedPerson}" Content="{Binding birthDay}"/>

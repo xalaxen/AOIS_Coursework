@@ -1,7 +1,6 @@
 ﻿using AOIS.Controller;
 using Lab_3.Classes;
 using Newtonsoft.Json;
-using ProductsDelliverySystem;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -23,7 +22,6 @@ namespace AOIS.Model
         string TOKEN = SaveAndLoad.LoadFromFile<string>("D:/Задания и записи/Архитура ИС/coursework/token.json")[0];
         public event PropertyChangedEventHandler PropertyChanged;
         MakeRequests requests = new MakeRequests();
-
         FilmJsonModel selectedFilm;
         string selectedGenre;
         ObservableCollection<FilmJsonModel> films = new ObservableCollection<FilmJsonModel>();
@@ -71,7 +69,9 @@ namespace AOIS.Model
         public FilmsVM(string selectedGenre)
         {
             SelectedGenre = selectedGenre;
+            // загружаем данные из бд
             FillFilmsList();
+            // если ничего там нет, загружаем из интернета
             if (Films.Count == 0)
             {
                 InitAsync();
@@ -101,7 +101,7 @@ namespace AOIS.Model
                             budget = film.Budget != null ? film.Budget.Value : 0,
                             budget_currency = film.Budget?.Currency ?? "#",
                             movieLenght = film.MovieLength,
-                            fees = film.Fees.World != null ? film.Fees.World.Value : ( film.Fees.Russia != null ? film.Fees.Russia.Value : 0 ),
+                            fees = film.Fees != null ? (film.Fees.World != null ? film.Fees.World.Value : ( film.Fees.Russia != null ? film.Fees.Russia.Value : 0 )) : 0,
                         };
 
                         // чтобы точно все было хорошо
@@ -142,6 +142,7 @@ namespace AOIS.Model
                             }
                         }
 
+                        // добавляем новый или обновляем старый, если что-то изменилось
                         context.Films.AddOrUpdate(f => f.film_id, newFilm);
                         Films.Add(film);
                         context.SaveChanges();                       
@@ -152,40 +153,38 @@ namespace AOIS.Model
             {
                 using (var context = new KinoPoistEntities())
                 {
-                    if (context.Films.Any() == true)
+                    // подгружаем все фильмы с указанным жанром
+                    var films = context.Films
+                                       .Where(film => film.Genres.Any(g => g.name == selectedGenre))
+                                       .ToList();
+
+                    // формирование списка для вывода в представление
+                    foreach (var film in films)
                     {
-                        foreach (var film in context.Films)
+                        var countries = film.Countries.ToList();
+                        var genres = film.Genres.ToList();
+                        var people = film.Staff_in_film.Select(person => new Person
                         {
-                            List<Country> countries = film.Countries.ToList();
-                            List<Genre> genres = film.Genres.ToList();
-                            List<Person> people = new List<Person>();
+                            Id = person.person_id,
+                            Profession = person.role_name
+                        }).ToList();
 
-                            foreach (var person in film.Staff_in_film)
-                            {
-                                people.Add(new Person
-                                {
-                                    Id = person.person_id,
-                                    Profession = person.role_name
-                                });
-                            }
+                        var newfilm = new FilmJsonModel(
+                            film.film_id,
+                            film.name,
+                            film.year,
+                            film.raiting,
+                            film.ageRating,
+                            film.budget,
+                            film.budget_currency,
+                            film.movieLenght,
+                            film.fees,
+                            genres,
+                            countries,
+                            people
+                        );
 
-                            FilmJsonModel newfilm = new FilmJsonModel(
-                                film.film_id,
-                                film.name,
-                                film.year,
-                                film.raiting,
-                                film.ageRating,
-                                film.budget,
-                                film.budget_currency,
-                                film.movieLenght,
-                                film.fees,
-                                genres,
-                                countries,
-                                people
-                                );
-
-                            Films.Add(newfilm);
-                        }
+                        Films.Add(newfilm);
                     }
                 }
             }
@@ -200,12 +199,14 @@ namespace AOIS.Model
 
             try
             {
+                // загрузка всех фильмов до какой-то страницы (по умолчанию только 1)
                 while (currentPage <= page)
                 {
                     string response = await requests.GetFilms(TOKEN, selectedGenre, currentPage);
                     RootObject rootObj = JsonConvert.DeserializeObject<RootObject>(response);
                     List<FilmJsonModel> filmsList = rootObj.Films;
                     
+                    // если фильмов почему-то нет (дада вроде и такое может быть)
                     if (filmsList.Count == 0)
                     {
                         break;
@@ -236,6 +237,24 @@ namespace AOIS.Model
             }
 
             OnPropertyChanged(nameof(Films));
+        }
+
+        // получаем съемочную группу фильма, для передачи их айдишников в другой VM
+        public async Task GetSelectedFilmStaff()
+        {
+            try
+            {
+                string response = await requests.GetFilmStaff(TOKEN, selectedFilm.Id);
+                RootObject rootObject = JsonConvert.DeserializeObject<RootObject>(response);
+                List<FilmJsonModel> root = rootObject.Films;
+                List<Person> people = root[0].Persons;
+                SelectedFilm.Persons = people;
+            }
+            catch
+            {
+                MessageBox.Show("Не удалось получить команду фильма");
+            }
+            OnPropertyChanged(nameof(SelectedFilm));
         }
 
         protected virtual void OnPropertyChanged(string propertyName)
