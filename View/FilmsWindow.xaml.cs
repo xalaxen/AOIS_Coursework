@@ -30,16 +30,14 @@ namespace AOIS
 
         private void FilmStaffDetailsBtn(object sender, RoutedEventArgs e)
         {
-            if(!(model.SelectedFilm == null))
-            {
-                StaffDetailsWindow staffDetailsWindow = new StaffDetailsWindow(model.SelectedFilm.Persons, model.SelectedFilm.Id);
-                staffDetailsWindow.Show();
-                staffDetailsWindow.Focus();
-            }
-            else
+            if(model.SelectedFilm == null)
             {
                 MessageBox.Show("Сначала выбирете фильм!");
+                return;
             }
+            StaffDetailsWindow staffDetailsWindow = new StaffDetailsWindow(model.SelectedFilm.Id);
+            staffDetailsWindow.Show();
+            staffDetailsWindow.Focus();
         }
 
         private async void UpdateFilmsListAPIBtn(object sender, RoutedEventArgs e)

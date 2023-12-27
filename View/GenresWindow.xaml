@@ -16,6 +16,7 @@
             <ColumnDefinition/>
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
+        
         <ListBox x:Name="GenresListBox" Height="400" Width="380" Grid.ColumnSpan="2" Grid.Row="0" ItemsSource="{Binding Genres}" SelectedItem="{Binding SelectedGenre}">
             <ListBox.ItemTemplate>
                 <DataTemplate>

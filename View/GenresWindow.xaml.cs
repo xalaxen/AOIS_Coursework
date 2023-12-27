@@ -30,17 +30,14 @@ namespace AOIS
 
         private void OpenFilmsCategoryBtn(object sender, RoutedEventArgs e)
         {
-            if(!(model.SelectedGenre == null))
-            {
-                FilmsWindow filmsWindow = new FilmsWindow(model.SelectedGenre.name);
-                filmsWindow.Show();
-                filmsWindow.Focus();
-            }
-            else
+            if(model.SelectedGenre == null)
             {
                 MessageBox.Show("Сначала выберете нужный жанр!\nЕсли список пуст, нажмите кнопку 'Обновить'.");
+                return;
             }
-            
+            FilmsWindow filmsWindow = new FilmsWindow(model.SelectedGenre.name);
+            filmsWindow.Show();
+            filmsWindow.Focus();
         }
 
         private void UpdateGanresListBtn(object sender, RoutedEventArgs e)

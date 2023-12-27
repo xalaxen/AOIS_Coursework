@@ -22,10 +22,10 @@ namespace AOIS
     public partial class StaffDetailsWindow : Window
     {
         private StaffVM model;
-        public StaffDetailsWindow(List<Person> people, long film_id)
+        public StaffDetailsWindow(long film_id)
         {
             InitializeComponent();
-            model = new StaffVM(people, film_id);
+            model = new StaffVM(film_id);
             DataContext = model;
         }
 

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AOIS.Controller;
+using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
@@ -13,5 +14,13 @@ namespace AOIS
     /// </summary>
     public partial class App : Application
     {
+        public MakeRequests Requests { get; private set; }
+
+        protected override void OnStartup(StartupEventArgs e)
+        {
+            base.OnStartup(e);
+
+            Requests = MakeRequests.Instance;
+        }
     }
 }
