@@ -1,4 +1,5 @@
 ﻿using AOIS.Model;
+using AOIS.View;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -32,6 +33,18 @@ namespace AOIS
         private void UdpateStaffDetailsInfoBtn(object sender, RoutedEventArgs e)
         {
             model.UpdatePersonsInfo();
+        }
+
+        private void OpenReportsWindowBtn(object sender, RoutedEventArgs e)
+        {
+            if(model.SelectedPerson == null)
+            {
+                MessageBox.Show("Сначала выберите человека!");
+                return;
+            }
+            CreateReports createReports = new CreateReports(model.SelectedPerson);
+            createReports.Show();
+            createReports.Focus();
         }
     }
 }

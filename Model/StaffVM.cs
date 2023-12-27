@@ -1,5 +1,4 @@
 ﻿using AOIS.Controller;
-using Lab_3.Classes;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -73,11 +72,12 @@ namespace AOIS.Model
             if(persons != null) // случай с загрузкой новых данных в бд
             {
                 MessageBox.Show("Загрузка данных началась!");
-                if(fillDataBase(film_id, persons) == 0)
+                try
                 {
+                    fillDataBase(film_id, persons);
                     MessageBox.Show("Загрузка данных завершилась!");
                 }
-                else
+                catch (System.Data.Entity.Core.EntityException ex)
                 {
                     MessageBox.Show("Не удалось загрузить данные!");
                 }
@@ -85,8 +85,15 @@ namespace AOIS.Model
             else // случай с загрузкой данных из бд
             {
                 MessageBox.Show("Загрузка данных началась!");
-                loadFromDataBase(film_id);
-                MessageBox.Show("Загрузка данных завершилась!");
+                try
+                {
+                    loadFromDataBase(film_id);
+                    MessageBox.Show("Загрузка данных завершилась!");
+                }
+                catch (System.Data.Entity.Core.EntityException ex)
+                {
+                    MessageBox.Show("Не удалось загрузить данные!");
+                }
             }
 
             OnPropertyChanged(nameof(Persons));

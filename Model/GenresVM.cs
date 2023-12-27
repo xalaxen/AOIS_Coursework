@@ -1,5 +1,4 @@
 ﻿using AOIS.Controller;
-using Lab_3.Classes;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -58,12 +57,26 @@ namespace AOIS.Model
             if (genreList != null)  // случай с загрузкой новых данных в бд
             {
                 MessageBox.Show("Загрузка данных началась!");
-                fillDataBase(genreList);
+                try
+                {
+                    fillDataBase(genreList);
+                }
+                catch (System.Data.Entity.Core.EntityException ex)
+                {
+                    MessageBox.Show("Не удалось загрузить данные!");
+                }
                 MessageBox.Show("Загрузка данных завершилась!");
             }
             else // случай с загрузкой данных из бд
             {
-                loadFromDataBase();
+                try
+                {
+                    loadFromDataBase();
+                }
+                catch(System.Data.Entity.Core.EntityException ex)
+                {
+                    MessageBox.Show("Не удалось загрузить данные!");
+                }
             }
 
             OnPropertyChanged(nameof(Genres));
