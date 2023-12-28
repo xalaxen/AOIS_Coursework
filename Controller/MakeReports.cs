@@ -131,10 +131,13 @@ namespace AOIS.Controller
             Object originalFormat = word.WdOriginalFormat.wdWordDocument;
             Object routeDocument = Type.Missing;
             wordapp.Quit(ref saveChanges, ref originalFormat, ref routeDocument);
-            excelapp.ActiveWorkbook.Saved = true;
-            excelapp.Quit();
-            Marshal.ReleaseComObject(excelapp);
-            System.Runtime.InteropServices.Marshal.FinalReleaseComObject(excelapp);
+            if(excelapp.ActiveWorkbook != null)
+            {
+                excelapp.ActiveWorkbook.Saved = true;
+                excelapp.Quit();
+                Marshal.ReleaseComObject(excelapp);
+                System.Runtime.InteropServices.Marshal.FinalReleaseComObject(excelapp);
+            }
         }
     }
 }
